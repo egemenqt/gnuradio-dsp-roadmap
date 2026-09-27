@@ -108,3 +108,37 @@ Bir DMR çerçevesi = **60 ms = 2 zaman dilimi (TDMA)**; telsiz tek dilimi kulla
 
 - **Proje 02:** Tepenin merkezden ~20 kHz kayması -> **ppm frekans hatası** ölçümü
 - **Proje 03:** SNR ve bant genişliğini bloklarla **sayısal** ölçmek
+
+---
+
+## Kavramlar (İngilizce terimler)
+
+- **IQ (In-phase / Quadrature):** Sinyalin karmaşık (I + jQ) gösterimi; genlik ve
+  fazı birlikte taşır. SDR'ın temel veri biçimi.
+- **FFT (Fast Fourier Transform):** Zaman sinyalini frekans bileşenlerine ayıran
+  hızlı algoritma — spektrumu çizen matematik.
+- **RBW (Resolution Bandwidth):** Her FFT bin'inin frekans genişliği =
+  `samp_rate / FFT`. Küçük RBW = daha ince frekans ayrımı.
+- **Sample rate (örnekleme hızı):** Saniyede alınan örnek sayısı. Görülebilen bant
+  genişliğini belirler.
+- **Nyquist:** Bir sinyali doğru örneklemek için örnekleme hızının, sinyal bandının
+  en az 2 katı olması kuralı.
+- **DC offset:** Zero-IF alıcıda merkezde (0 Hz) beliren donanım kaynaklı sabit
+  tepe; sinyal değildir.
+- **Zero-IF / direct conversion:** Sinyali doğrudan tabana (0 Hz) indiren alıcı
+  mimarisi; B210 böyledir.
+- **Saturation (doygunluk):** Giriş çok güçlü olup ADC'yi taşırması; sinyal bozulur,
+  spektrum yayılır.
+- **Gain (kazanç):** Alıcı ön-yükseltecinin dB cinsinden yükseltmesi; sinyali ADC
+  aralığına oturtur. SNR'ı artırmaz.
+- **SNR (Signal-to-Noise Ratio):** Sinyal gücünün gürültü gücüne oranı (dB).
+- **Noise floor (gürültü tabanı):** Sinyal yokken spektrumdaki gürültü seviyesi.
+- **Waterfall:** Spektrumun zaman içinde aşağı akan, renk = güç gösterimi.
+- **Max Hold / Min Hold:** Her frekansın gördüğü en yüksek / en düşük değeri
+  biriktiren iz.
+- **TDMA (Time Division Multiple Access):** Zamanı dilimlere bölüp paylaştırma;
+  DMR 30 ms'lik slot kullanır.
+- **4FSK:** 4 seviyeli frekans kaydırmalı anahtarlama; DMR'ın modülasyonu.
+- **Deviation (sapma):** FM'de taşıyıcının bilgiyle kaç Hz kaydığı.
+- **Processing gain (işlem kazancı):** FFT'nin dar bin'leri yüzünden ekran SNR'ının
+  gerçek SNR'dan yüksek görünmesi.

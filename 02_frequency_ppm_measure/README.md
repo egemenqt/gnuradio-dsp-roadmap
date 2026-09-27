@@ -85,3 +85,27 @@ FM sapması / kısa süreli kararsızlık).
 
 - **Proje 03:** SNR ve bant genişliğini bloklarla **sayısal** ölçmek
   (göz kararı yerine Number Sink + güç ölçüm zinciri).
+
+---
+
+## Kavramlar (İngilizce terimler)
+
+> Proje 01'deki terimler (IQ, FFT, RBW, DC offset, SNR, gain...) için 01'in
+> README'sine bak. Bu projede yeni geçenler:
+
+- **Offset tuning:** Merkez frekansı sinyalden bilerek kaydırıp sinyali DC
+  ofsetten ayırma tekniği.
+- **IQ image (hayalet):** IQ dengesizliğinden doğan, gerçek sinyalin merkez
+  etrafındaki zayıf ayna kopyası.
+- **Image rejection:** Gerçek sinyal ile image arasındaki dB fark; alıcının bu
+  artefaktı ne kadar bastırdığı (B210'da ~33 dB gözlendi).
+- **LO (Local Oscillator):** Alıcının karıştırıcı frekansı; merkez (center)
+  frekansını belirler. LO sızıntısı merkezde DC tepe yaratır.
+- **ppm (parts per million):** Milyonda bir. Frekans hatasının frekansa oranı
+  × 1.000.000.
+- **TCXO / GPSDO:** Sıcaklık dengeli kristal osilatör / GPS disiplinli osilatör;
+  frekans referansının doğruluğunu belirler (B210'un TCXO'su ~±2 ppm).
+- **Window (Blackman-harris):** FFT öncesi uygulanan pencere fonksiyonu; spektral
+  sızıntıyı (yan lobları) azaltır, tepeleri daha temiz gösterir.
+- **Channel raster:** Kanalların oturduğu frekans ızgarası (ticari UHF'te genelde
+  12.5 kHz). Nominal frekansı çıkarmakta kullanıldı.
