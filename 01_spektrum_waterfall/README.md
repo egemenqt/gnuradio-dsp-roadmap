@@ -142,3 +142,22 @@ Bir DMR çerçevesi = **60 ms = 2 zaman dilimi (TDMA)**; telsiz tek dilimi kulla
 - **Deviation (sapma):** FM'de taşıyıcının bilgiyle kaç Hz kaydığı.
 - **Processing gain (işlem kazancı):** FFT'nin dar bin'leri yüzünden ekran SNR'ının
   gerçek SNR'dan yüksek görünmesi.
+
+---
+
+## Formüller
+
+Bu projede kullanılan / gösterilen bağıntılar:
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| Görülebilen bant | `[f_merkez − fs/2, f_merkez + fs/2]` | fs = 1 MHz → ±500 kHz |
+| Nyquist koşulu | `fs ≥ 2·B` | 12.5 kHz kanal için fs ≫ 25 kHz |
+| Frekans çözünürlüğü (RBW) | `RBW = fs / N_FFT` | 1 000 000 / 4096 ≈ **244 Hz/bin** |
+| Time Sink süresi | `T = N_örnek / fs` | 60 000 / 1 000 000 = **60 ms** |
+| Güç (dB) | `P_dB = 10·log10(P)` | — |
+| Genlik (dB) | `A_dB = 20·log10(A)` | — |
+| Güç (dBm) | `P_dBm = 10·log10(P / 1 mW)` | 4 W → 10·log10(4000) ≈ **36 dBm** |
+| SNR | `SNR_dB = 10·log10(P_sinyal / P_gürültü)` = `P_sinyal_dB − P_gürültü_dB` | *Aynı bant genişliğinde* ölçülmeli (Proje 03) |
+| FFT işlem kazancı | `G_FFT = 10·log10(N_FFT)` | 4096 → 1024: `10·log10(4) ≈ 6 dB` (bin başına gürültü tabanı ~6 dB yükselir) |
+| DMR çerçeve süresi | `T_çerçeve = 2 × T_slot` | 2 × 30 ms = **60 ms** |

@@ -109,3 +109,21 @@ FM sapması / kısa süreli kararsızlık).
   sızıntıyı (yan lobları) azaltır, tepeleri daha temiz gösterir.
 - **Channel raster:** Kanalların oturduğu frekans ızgarası (ticari UHF'te genelde
   12.5 kHz). Nominal frekansı çıkarmakta kullanıldı.
+
+---
+
+## Formüller
+
+Bu projede kullanılan / gösterilen bağıntılar:
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| Frekans hatası | `Δf = f_ölçülen − f_nominal` | 446.30014 − 446.30000 MHz = **+140 Hz** |
+| ppm | `ppm = Δf / f_nominal × 10⁶` | 140 / 446.3·10⁶ × 10⁶ ≈ **0.31 ppm** |
+| ppm → Hz | `Δf = ppm × f_nominal × 10⁻⁶` | ±2 ppm (B210 TCXO) → ≈ **±893 Hz** |
+| Frekans çözünürlüğü (RBW) | `RBW = fs / N_FFT` | 100 000 / 8192 ≈ **12.2 Hz/bin** |
+| Offset tuning (LO) | `f_LO = f_kanal − f_offset` | 446.300 − 0.010 = **446.290 MHz** |
+| Baseband konumu | `f_bb = f_sinyal − f_LO` | +10 kHz (gerçek sinyal) |
+| IQ image konumu | `f_image = f_LO − f_bb` (baseband'de `−f_bb`) | 446.280 MHz (−10 kHz) |
+| Image rejection | `IRR_dB = P_sinyal_dB − P_image_dB` | −24 − (−57) = **33 dB** |
+| Ölçüm belirsizliği (ppm) | `u_ppm = u_Hz / f_nominal × 10⁶` | ±400 Hz → ≈ **±0.9 ppm** (|hata| < ~1 ppm) |
