@@ -41,44 +41,69 @@ USRP Source (100 kHz, center = freq_range)
 
 ## Gözlemler
 
-### 1. Gain taraması
+### 1. İlk tarama: sinyal tam DC'nin üstünde (freq_range = 446.30014 MHz)
 
-Telsiz sessiz PTT (tek taşıyıcı), okumalar Number Sink'ten, değerler dBFS:
+İlk ölçümlerde USRP merkezi yanlışlıkla **sinyalin tam üstüne** ayarlanmıştı
+(offset tuning kapalı; Xlating kaydırması = 0). Değerler dBFS:
 
-| Gain | P(N) (PTT kapalı) | P(S+N) (PTT açık) | SNR | Sinyal adımı |
+| Gain | P(N) | P(S+N) | SNR | Sinyal adımı |
 |---|---|---|---|---|
 | 0 | −88 | −26 | 62 dB | — |
 | 10 | −86 | −18 | 68 dB | +8 dB |
-| 20 | −85 | −8 | **77 dB** | +10 dB |
+| 20 | −85 | −8 | 77 dB | +10 dB |
 | 30 | −82 | −3 | (79 dB) | +5 dB ⚠️ |
 | 40 | −83 | −2 | (81 dB) | +1 dB ⚠️ |
 
-- **Sinyal, 0–20 arası doğrusal:** Her 10 dB gain → ~8–10 dB artış. 20'den sonra
-  **sıkışma (compression)**, 40'ta 0 dBFS tavanına dayanıp **doygunluk**. 30 ve 40'taki
-  SNR değerleri bu yüzden **güvenilmez** (parantez içinde).
-- **Gürültü 40 dB gain boyunca sadece ~5 dB değişti** (−88 → −83). Bu aralıkta
-  gürültü tabanını **ADC / dijital taban** belirliyor, ön-uç gürültüsü değil.
-  Sabit tabana karşı sinyal büyüdüğü için SNR gain'le **artıyor**.
-- **Ders:** "Gain SNR'ı artırmaz" kuralı yalnızca **ön-uç gürültüsü baskınsa** geçerli.
-  Düşük gain'de ADC tabanı baskındır ve gain düşürmek SNR kaybettirir.
-- **En iyi çalışma noktası:** gain ≈ 20 → sinyal −8 dBFS (doğrusal), SNR ≈ **77 dB**.
-- Ölçüm tekrarlanabilirliği ±1–2 dB. Telsizin yeri, yönü ve güç seviyesi sabit
-  tutulmalı. Yakın mesafede el hareketi bile birkaç dB değiştiriyor.
+![Sinyal DC üzerinde - ortada çentik](img/01_dc_uzerinde_gain10_centik.png)
 
-### 2. İzole edilen kanal ve DC düzeltme çentiği
+- Spektrumun ortasındaki keskin **çentik**, B205mini'nin otomatik **DC ofset
+  düzeltmesinin** 0 Hz'i bastırması. Sinyal DC'ye oturunca taşıyıcının bir kısmı yeniyor.
+- **Doygunluk eğrisi:** 0–20 arası sinyal doğrusal. 30'da **sıkışma** (+5 dB),
+  40'ta 0 dBFS tavanında **doygunluk** (+1 dB). 30/40'taki SNR'lar güvenilmez.
 
-![Xlating çıkışı spektrum, gain 10](img/01_xlating_spektrum_gain10.png)
+### 2. Offset tuning ile tekrar (freq_range = 446.28 MHz, sinyal +20 kHz)
 
-- Xlating çıkışında sadece ~12 kHz'lik kanal görünüyor. Filtrenin şekli (kenarlarda
-  düşüş) belli; kanal dışı her şey atılmış.
-- Number Sink aynı anda sayısal değeri gösteriyor (üstte `Data 0 −22.2 dB`).
-- Bu görüntü alınırken `freq_range = 446.30014 MHz`, yani USRP merkezi **tam sinyalin
-  üstünde** (offset tuning kapalı). Ortadaki keskin **çentik**, B205mini'nin otomatik
-  **DC ofset düzeltmesinin** 0 Hz'i bastırmasından kaynaklanıyor olabilir. Sinyal tam
-  DC'ye oturunca merkezi kısmen yenebilir. Bu yüzden ölçümde offset tuning (446.28 MHz)
-  tercih edildi.
+| Gain | P(N) | P(S+N) | SNR | Sinyal adımı |
+|---|---|---|---|---|
+| 0 | −95 | −23 | **72 dB** | — |
+| 10 | −93 | −14 | **79 dB** | +9 dB |
+| 20 | −91 | −5 | **86 dB** | +9 dB |
 
-### 3. Proje 01 ile fark
+| gain 0 | gain 10 | gain 20 |
+|---|---|---|
+| ![](img/02_offset_gain0_ptt_kapali.png) | ![](img/03_offset_gain10_ptt_kapali.png) | ![](img/04_offset_gain20_ptt_kapali.png) |
+
+Görseller PTT kapalıyken alındı (Number Sink = gürültü gücü). Zeytin **Max Hold**
+izi, PTT açıkken biriken sinyali gösteriyor. **Ortada çentik yok.**
+
+### 3. Karşılaştırma: DC'de vs offset'te
+
+| Gain | P(S+N) DC → offset | P(N) DC → offset | SNR DC → offset |
+|---|---|---|---|
+| 0 | −26 → −23 | −88 → −95 | 62 → 72 dB |
+| 10 | −18 → −14 | −86 → −93 | 68 → 79 dB |
+| 20 | −8 → −5 | −85 → −91 | 77 → 86 dB |
+
+- **Sinyal ~3–4 dB yükseldi:** DC düzeltmesi artık taşıyıcıyı yemiyor.
+- **Gürültü ~6–7 dB düştü:** 0 Hz civarı alıcının en kirli bölgesi (LO sızıntısı,
+  DC artığı, 1/f gürültüsü). Kanal oradan uzaklaşınca daha temiz bir tabana oturuyor.
+- **SNR ~10 dB iyileşti**, sadece merkezi 20 kHz kaydırarak.
+- **Ders:** Offset tuning sadece "DC tepesini görmemek" için değil, **ölçülebilir
+  performans** için de şart.
+
+### 4. Gain ve gürültü tabanı
+
+- Sinyal gain'i doğrusal takip ediyor (her 10 dB'de ~9 dB).
+- Gürültü gain'i zar zor takip ediyor (her 10 dB'de ~2 dB). Bu aralıkta gürültü
+  tabanını **ADC / dijital taban** belirliyor, ön-uç gürültüsü değil. Bu yüzden
+  SNR gain'le **artıyor**.
+- **"Gain SNR'ı artırmaz"** kuralı yalnızca **ön-uç gürültüsü baskınsa** geçerli.
+  Düşük gain'de ADC tabanı baskın ve gain düşürmek SNR kaybettiriyor.
+- **Çalışma noktası:** Offset'te sinyal gain 20'de −5 dBFS, tavana yakın. Bu kurulum
+  için güvenli aralık gain **~15–20**.
+- Tekrarlanabilirlik ±1–2 dB. Telsizin yeri, yönü ve güç seviyesi sabit tutulmalı.
+
+### 5. Proje 01 ile fark
 
 Proje 01'de ekranda okunan tepe/taban farkı **bin başına** idi ve FFT boyutuyla
 değişiyordu. Buradaki SNR **11 kHz'lik gerçek bant genişliğinde** ölçüldü ve FFT
@@ -96,6 +121,7 @@ olduğu için mutlak seviyeler sadeleşir.
 - ADC tabanı vs ön-uç gürültüsü → optimum gain
 - GRC'de değişken bağlama (`scale = 1/length`, `center = measured − freq_range`)
 - Bilimsel gösterim (`446.30014e6`) ile basamak hatalarından kaçınma
+- **Offset tuning'in SNR'a etkisi:** DC civarından kaçmak ~10 dB kazandırdı
 
 ## Sonraki adım
 
@@ -125,3 +151,6 @@ olduğu için mutlak seviyeler sadeleşir.
 - **ADC noise floor:** Dijitalleştiricinin kendi gürültü tabanı. Gain'den bağımsız.
 - **Front-end noise:** Anten, LNA ve karıştırıcı kaynaklı analog gürültü. Gain'le birlikte büyür.
 - **DC offset correction:** UHD'nin 0 Hz'deki sabit bileşeni otomatik bastırması.
+  Sinyal DC'ye oturursa onun da bir kısmını yer (çentik).
+- **1/f (flicker) noise:** Frekans düştükçe artan gürültü. Direct-conversion
+  alıcılarda 0 Hz civarını kirletir.
