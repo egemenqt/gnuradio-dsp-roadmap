@@ -154,3 +154,51 @@ olduğu için mutlak seviyeler sadeleşir.
   Sinyal DC'ye oturursa onun da bir kısmını yer (çentik).
 - **1/f (flicker) noise:** Frekans düştükçe artan gürültü. Direct-conversion
   alıcılarda 0 Hz civarını kirletir.
+
+---
+
+## Formüller
+
+### Güç ölçüm zinciri (|x|² → ortalama → 10·log10)
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| Anlık güç | `p[n] = |x[n]|² = I² + Q²` | Complex to Mag^2 |
+| Ortalama güç | `P = (1/L) · Σ p[n]` (n = 0…L−1) | Moving Average, `scale = 1/L` |
+| Ortalama süresi | `T = L / fs_çıkış` | 1250 / 12 500 = **0.1 s** |
+| Moving Average uzunluğu | `L = fs_çıkış · T` | 12 500 × 0.1 = **1250** |
+| Güç (dBFS) | `P_dBFS = 10·log10(P) + k` | Log10 bloğu `n = 10`, `k = 0`; 0 dBFS ⇔ `|x|² = 1` |
+| dB → lineer | `P = 10^(P_dB / 10)` | −23 dBFS → 5.0·10⁻³ |
+| Doygunluk payı (headroom) | `H = 0 − P(S+N)_dBFS` | gain 20, offset: 0 − (−5) = **5 dB** |
+
+### SNR
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| Ölçülen toplam güç | `P(S+N) = Ps + Pn` (lineer toplanır, dB'de toplanmaz) | — |
+| Sinyal gücü | `Ps = P(S+N) − Pn` (lineer) | — |
+| SNR (tam) | `SNR_dB = 10·log10( Ps / Pn ) = 10·log10( 10^((P(S+N) − Pn)/10) − 1 )` | — |
+| SNR (sinyal baskınsa) | `SNR_dB ≈ P(S+N)_dB − Pn_dB` | gain 0, offset: −23 − (−95) = **72 dB** |
+| Yaklaşımın hatası | `ε = 10·log10(1 + 1/SNR_lin)` | 72 dB'de ≈ 10⁻⁷ dB (ihmal edilebilir) |
+| Gain'e karşı sinyal adımı | `ΔPs = Ps_dB(g₂) − Ps_dB(g₁)` (ideal: `= g₂ − g₁`) | −14 − (−23) = **+9 dB** (10 dB gain için) |
+| Doygunlukta sıkışma | `ΔPs < Δg` ⇒ sıkışma (compression) | gain 20→30: +5 dB (< 10 dB) |
+| Yerleşim etkisi (DC → offset) | `ΔSNR = ΔP(S+N) − ΔPn` | (−23 − (−26)) − (−95 − (−88)) = 3 + 7 = **10 dB** |
+
+### Bant genişliği ve ölçek dönüşümü
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| Carson bant genişliği | `bw = 2·(Δf + f_m)` | 2·(2.5 + 3) = **11 kHz** |
+| Gürültü gücü yoğunluğu | `N₀_dB = Pn_dB − 10·log10(B)` | −91 − 10·log10(11 000) ≈ **−131.4 dBFS/Hz** |
+| Farklı banda dönüştürme | `SNR_B₂ = SNR_B₁ + 10·log10(B₁ / B₂)` | 244 Hz bin → 11 kHz: `10·log10(11 000 / 244) ≈ 16.5 dB` (Proje 01'deki ekran SNR'ının şişme nedeni) |
+
+### Frequency Xlating FIR Filter parametreleri
+
+| Parametre | Formül | Bu projedeki değer |
+|---|---|---|
+| Kaydırma | `center_freq = f_sinyal − f_LO` | 446.30014e6 − 446.28e6 = **+20.14 kHz** |
+| Decimation | `decim = fs / fs_çıkış` | 100e3 / 12.5e3 = **8** |
+| Çıkış hızı koşulu | `fs_çıkış > bw` (aliasing olmasın) | 12.5 kHz > 11 kHz |
+| Kesim frekansı | `f_cutoff = bw / 2` | **5.5 kHz** |
+| Geçiş genişliği | `f_transition = 0.2 · bw` | **2.2 kHz** |
+| Ölçüm penceresi koşulu | `|center_freq| + bw/2 < fs/2` | 20.14 + 5.5 = 25.6 kHz < 50 kHz |
