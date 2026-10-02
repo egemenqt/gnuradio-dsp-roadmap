@@ -17,7 +17,7 @@ Bunlar `gnu_radio_lessons/` ve `gnuradio/` klasörlerinde zaten var:
 - AM demodülasyon (`am_demodulation.grc`)
 - Wideband FM alıcı (`wbfm_receive2.grc`)
 - Spectrum analyzer (`spectrum_analyzer.py`, `spectrum_analyzer_for_mouse.grc`)
-- USRP (B205mini) ve LimeSDR entegrasyonu (`usrp.grc`, `limesdr.grc`)
+- USRP (B210) ve LimeSDR entegrasyonu (`usrp.grc`, `limesdr.grc`)
 - Kendi kablosuz cihazını inceleme (mouse sinyali yakalama/analiz)
 
 > Yani "GRC arayüzü + temel akış" fazını geçtin. Aşağısı bunun üstüne kuruluyor.

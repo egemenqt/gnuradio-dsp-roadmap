@@ -1,6 +1,6 @@
 # Proje 03 — SNR'ın Sayısal Ölçümü
 
-**Donanım:** USRP B205mini + Hytera PD565
+**Donanım:** USRP B210 + Hytera PD565
 **Amaç:** Proje 01'de spektrumdan göz kararı okunan "SNR" FFT işlem kazancı
 yüzünden şişikti ve RBW'ye bağlıydı. Bu projede sinyal ve gürültü gücünü
 **aynı bant genişliğinde** ölçüp gerçek SNR'ı **rakamla** bulmak.
@@ -56,7 +56,7 @@ USRP Source (100 kHz, center = freq_range)
 
 ![Sinyal DC üzerinde - ortada çentik](img/01_dc_uzerinde_gain10_centik.png)
 
-- Spektrumun ortasındaki keskin **çentik**, B205mini'nin otomatik **DC ofset
+- Spektrumun ortasındaki keskin **çentik**, B210'un otomatik **DC ofset
   düzeltmesinin** 0 Hz'i bastırması. Sinyal DC'ye oturunca taşıyıcının bir kısmı yeniyor.
 - **Doygunluk eğrisi:** 0–20 arası sinyal doğrusal. 30'da **sıkışma** (+5 dB),
   40'ta 0 dBFS tavanında **doygunluk** (+1 dB). 30/40'taki SNR'lar güvenilmez.
