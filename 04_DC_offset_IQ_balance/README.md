@@ -240,3 +240,39 @@ B210'un **düzeltilmiş** performansı değil, **düzeltmesiz** performansına y
 - **Quantization step (LSB):** Sayısal verinin en küçük adımı (sc16 için 1/32768).
 - **Harmonic distortion:** Doygunluğa yakın çalışmada tonun katlarında oluşan bozulma.
 - **Retune:** Merkez frekansın yeniden ayarlanması; kalibrasyon/takip sıfırlanabilir.
+
+---
+
+## Formüller
+
+Bu projede kullanılan / gösterilen bağıntılar (dBFS ve güç zinciri için bkz. 03, ppm için bkz. 02):
+
+### DC ofset
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| DC ofset büyüklüğü | `|DC| = √(I_dc² + Q_dc²)` | A1, dc: √(0.0013² + 0.0020²) ≈ **0.0024** |
+| DC ofset gücü | `P_DC = 10·log10(I_dc² + Q_dc²)` [dBFS] | dc: **−52.4 dBFS** · offset: **−66.0 dBFS** |
+| İki yöntemin farkı | `ΔP = P(dc) − P(offset)` | spektrum: −62 − (−76) = **14 dB** · zaman: −52.4 − (−66.0) ≈ **13.6 dB** |
+| Kuantizasyon adımı (sc16) | `LSB = 1/32768`, `20·log10(LSB)` | 3.05·10⁻⁵ ≈ **−90.3 dBFS** |
+
+### IQ image ve dengesizlik
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| Image frekansı | `f_image = 2·f_LO − f_sinyal` (baseband'de `−f_bb`) | 2·446.28 − 446.300 = **446.260 MHz** |
+| Image rejection | `IRR = P_sinyal − P_image` [dB] | kapalı A1: −18 − (−57) = **39** · D1: **40** · açık, yeni ayar: **30** · açık, oturmuş: **≳ 95** |
+| IRR (genel) | `IRR = 10·log10( (1 + 2g·cosφ + g²) / (1 − 2g·cosφ + g²) )` | g = Q/I genlik oranı, φ = faz hatası |
+| IRR — sadece genlik (φ = 0) | `IRR ≈ 20·log10( (1+g) / (1−g) )` | g = 0.90 → 25.6 · 0.97 → 36.3 · 0.98 → 39.9 · 0.99 → **46.0 dB** |
+| IRR'den genlik oranı | `g = (10^(IRR/20) − 1) / (10^(IRR/20) + 1)` | 39 dB → g ≈ 0.978 (**%2.2**) · 95 dB → g ≈ 0.99996 |
+| IRR — sadece faz (g = 1) | `IRR ≈ 20·log10(2/φ)` → `φ ≈ 2·10^(−IRR/20)` [rad] | 39 dB → **≈ 1.29°** · 95 dB → ≈ 0.002° |
+
+### Zaman / IQ düzlemi
+
+| Büyüklük | Formül | Bu projedeki değer |
+|---|---|---|
+| Genlik → dBFS | `A_dBFS = 20·log10(A)` | 0.8 → −1.9 · 0.72 → −2.9 · 0.54 → **−5.4 dBFS** |
+| Döngü başına örnek | `N = fs / f_bb` | 100 k / 20 k = **5** |
+| Fazör dönüş hızı | `f = 1 / T` | T ≈ 4.5 ms → **≈ 222 Hz** (kalan frekans hatası) |
+| Kayma (ppm) | `Δppm = Δf / f × 10⁶` | (222 − 140) / 446.3 MHz ≈ **0.18 ppm** |
+| 2. harmonik ve image'ı | `f_LO ± 2·f_bb` | **446.320 / 446.240 MHz** |
